@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pokédex Personnel — 0001 à 1025</title>
+<style>
+:root{--bg:#eef1f5;--card:#fff;--text:#172033;--muted:#667085;--line:#dfe3ea;--red:#e33535;--green:#20a56a;--shadow:0 5px 18px #00000012}
+[data-theme=dark]{--bg:#101318;--card:#1b2029;--text:#f3f5f8;--muted:#aab2bf;--line:#303846;--shadow:0 5px 18px #0008}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:linear-gradient(135deg,#c91f2a,#f04a43);color:white;padding:18px 15px 22px;box-shadow:0 3px 15px #0003}.wrap{max-width:1150px;margin:auto}
+h1{margin:0;font-size:clamp(27px,6vw,44px)}.sub{opacity:.9;margin:3px 0 17px}.stats{display:flex;justify-content:space-between;font-weight:800;margin:6px 0}.bar{height:13px;background:#ffffff45;border-radius:99px;overflow:hidden}.fill{height:100%;width:0;background:#fff;transition:.25s}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.controls{display:flex;gap:8px;flex-wrap:wrap}.controls input{flex:1;min-width:180px}
+input,select,button{font:inherit;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--card);color:var(--text)}button{font-weight:750;cursor:pointer}button.active{background:var(--red);color:white;border-color:var(--red)}
+main{max-width:1150px;margin:auto;padding:18px 15px}.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:16px;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:1fr;gap:10px}.card{display:flex;align-items:center;gap:9px;padding:9px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}.card.have{border-color:#9cdbbe;background:#f1fcf7}.card img{width:65px;height:65px;flex-shrink:0}.num{font-size:11px;color:var(--muted);font-weight:800}.name{font-size:16px;font-weight:800}.check{width:22px;height:22px;accent-color:var(--green);margin-left:auto;flex:0 0 auto;position:relative;z-index:5;cursor:pointer}.star{border:0;background:transparent;font-size:24px;padding:2px;cursor:pointer;color:#a5aab2}.star.on{color:#f2b800}
+.type{display:inline-block;padding:3px 7px;border-radius:20px;font-size:10px;font-weight:800;background:#e8ebf0;color:#394150;margin:2px 2px 0 0}.darktype{background:#343b48;color:#fff}
+h2{margin:2px 0 10px}.badges{display:flex;gap:10px;flex-wrap:wrap}.badge{border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;min-width:105px;opacity:.4}.badge.unlocked{opacity:1}.badge b{display:block;font-size:22px}.small{color:var(--muted);font-size:12px}
+@media(max-width:600px){main{padding:12px 9px}.grid{grid-template-columns:1fr;gap:7px}.card{padding:6px;gap:5px}.card img{width:52px;height:52px}.name{font-size:13px}.type{font-size:8px;padding:2px 5px}.check{width:19px;height:19px}.star{font-size:20px}.panel{padding:11px}}
+</style></head>
+<body>
+<header><div class="wrap">
+<h1>🔴 Pokédex Personnel</h1><div class="sub">#0001 → #1025 · Ta collection Pokémon</div>
+<div class="stats"><span id="count">0 / 1025 possédés</span><span id="pct">0 %</span></div><div class="bar"><div class="fill" id="fill"></div></div>
+<nav><button class="active" onclick="tab('dex',this)">📖 Pokédex</button><button onclick="tab('stats',this)">🏆 Collection</button><button onclick="toggleTheme()">🌙 Mode sombre</button></nav>
+</div></header>
+<main>
+<section id="dex">
+<div class="panel"><div class="controls">
+<input id="search" placeholder="🔎 Pokémon ou numéro…"><select id="gen"><option value="0">Toutes les générations</option><option value="1">Génération 1</option><option value="2">Génération 2</option><option value="3">Génération 3</option><option value="4">Génération 4</option><option value="5">Génération 5</option><option value="6">Génération 6</option><option value="7">Génération 7</option><option value="8">Génération 8</option><option value="9">Génération 9</option></select>
+<select id="typefilter"><option value="">Tous les types</option></select>
+<button onclick="setMode('all')">Tous</button><button onclick="setMode('have')">✅ Possédés</button><button onclick="setMode('missing')">❌ Manquants</button><button onclick="setMode('fav')">⭐ Favoris</button>
+</div></div>
+<div id="list" class="grid"></div></section>
+<section id="stats" style="display:none">
+<div class="panel"><h2>🏆 Ma collection</h2><div id="stattext"></div></div>
+<div class="panel"><h2>🎖️ Badges</h2><div class="badges" id="badges"></div></div>
+<div class="panel"><h2>🌎 Générations</h2><div id="gens"></div></div>
+<div class="panel"><button onclick="resetAll()">🗑️ Réinitialiser toute la collection</button></div>
+</section>
+</main>
+<div id="modal" style="display:none;position:fixed;inset:0;z-index:50;background:#0009;overflow:auto;padding:18px" onclick="if(event.target===this)closeDetail()">
+ <div style="max-width:560px;margin:25px auto;background:var(--card);color:var(--text);border-radius:20px;padding:20px;position:relative">
+  <button onclick="closeDetail()" style="float:right">✕ Fermer</button><div id="detailContent" style="padding-top:18px">Chargement…</div>
+ </div>
+</div>
+<script>
+const namesUrl='https://raw.githubusercontent.com/sindresorhus/pokemon/main/data/fr.json';
+const typeNames=['Normal','Feu','Eau','Électrik','Plante','Glace','Combat','Poison','Sol','Vol','Psy','Insecte','Roche','Spectre','Dragon','Ténèbres','Acier','Fée'];
+const typeApi=['normal','fire','water','electric','grass','ice','fighting','poison','ground','flying','psychic','bug','rock','ghost','dragon','dark','steel','fairy'];
+const genEnds=[151,251,386,493,649,721,809,905,1025];
+let names=[], data=[], apiData={}, checked=JSON.parse(localStorage.getItem('dexHave')||'{}'), fav=JSON.parse(localStorage.getItem('dexFav')||'{}'), mode='all', details={};
+
+function gen(n){return n<=151?1:n<=251?2:n<=386?3:n<=493?4:n<=649?5:n<=721?6:n<=809?7:n<=905?8:9}
+function sprite(n){return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${n}.png`}
+async function openDetail(n){
+ const d=data[n-1], box=document.getElementById('detailContent'), modal=document.getElementById('modal');
+ modal.style.display='block';box.innerHTML='Chargement de la fiche…';
+ try{
+  const x=apiData[n]||await fetch('https://pokeapi.co/api/v2/pokemon/'+n).then(r=>r.json());
+  const species=await fetch('https://pokeapi.co/api/v2/pokemon-species/'+n).then(r=>r.json()).catch(()=>null);
+  const types=x.types.map(t=>typeNames[typeApi.indexOf(t.type.name)]||t.type.name).join(' · ');
+  const stats=x.stats.map(st=>`<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:5px 0"><span>${({hp:'PV',attack:'Attaque',defense:'Défense','special-attack':'Att. Spé.','special-defense':'Déf. Spé.',speed:'Vitesse'})[st.stat.name]||st.stat.name}</span><b>${st.base_stat}</b></div>`).join('');
+  const flavor=species?.flavor_text_entries?.find(e=>e.language.name==='fr')?.flavor_text?.replace(/[\\n\\f]/g,' ')||'Description indisponible.';
+  const abilities=x.abilities.map(a=>a.ability.name.replaceAll('-',' ')).join(', ');
+  box.innerHTML=`<div style="text-align:center"><div style="color:var(--muted);font-weight:800">N° ${String(n).padStart(4,'0')} · Génération ${d.g}</div><h2 style="font-size:28px;margin:5px 0">${d.name}</h2><img src="${x.sprites.other['official-artwork'].front_default||sprite(n)}" style="width:180px;height:180px;object-fit:contain" onerror="this.src='${sprite(n)}'"><div><b>${types}</b></div></div>
+  <p style="line-height:1.5">${flavor}</p><div class="panel" style="box-shadow:none"><b>📏 Taille :</b> ${x.height/10} m &nbsp; <b>⚖️ Poids :</b> ${x.weight/10} kg<br><b>✨ Talents :</b> ${abilities}</div><div class="panel" style="box-shadow:none"><h3>Statistiques de base</h3>${stats}</div>
+  <button class="${checked[n]?'active':''}" onclick="checked[${n}]=!checked[${n}];if(!checked[${n}])delete checked[${n}];save();render();closeDetail()">${checked[n]?'✓ Possédé':'＋ Marquer comme possédé'}</button>
+  <button onclick="fav[${n}]=!fav[${n}];if(!fav[${n}])delete fav[${n}];save();render();closeDetail()">${fav[n]?'★ Retirer des favoris':'☆ Ajouter aux favoris'}</button>`;
+ }catch(e){box.innerHTML='Impossible de charger la fiche. Vérifie ta connexion Internet.'}
+}
+function closeDetail(){document.getElementById('modal').style.display='none'}
+async function load(){
+ try{let r=await fetch(namesUrl);names=await r.json();names=names.slice(0,1025);
+ data=names.map((name,i)=>({n:i+1,name,g:gen(i+1),types:[],loaded:false}));
+ document.getElementById('typefilter').innerHTML='<option value="">Tous les types</option>'+typeNames.map((x,i)=>`<option value="${typeApi[i]}">${x}</option>`).join('');
+ render(); loadTypes();
+ }catch(e){document.getElementById('list').innerHTML='<div class="panel">Impossible de charger le Pokédex. Recharge la page avec Internet.</div>'}
+}
+async function loadTypes(){
+ for(let start=1;start<=1025;start+=40){
+  let jobs=[];for(let n=start;n<Math.min(start+40,1026);n++) jobs.push(fetch('https://pokeapi.co/api/v2/pokemon/'+n).then(r=>r.json()).then(x=>{apiData[n]=x;details[n]=x.types.map(t=>t.type.name);let d=data[n-1];if(d)d.types=details[n];d.loaded=true}).catch(()=>{}));
+  await Promise.all(jobs); render();
+ }
+}
+function render(){
+ const q=search.value.toLowerCase(), g=+gen.value, tf=typefilter.value, list=document.getElementById('list');list.innerHTML='';
+ data.forEach(d=>{let has=!!checked[d.n], f=!!fav[d.n];
+ if(q && !(`${String(d.n).padStart(4,'0')} ${d.name}`).toLowerCase().includes(q))return;
+ if(g&&d.g!==g)return;if(tf&&!d.types.includes(tf))return;
+ if(mode==='have'&&!has||mode==='missing'&&has||mode==='fav'&&!f)return;
+ let c=document.createElement('div');c.className='card'+(has?' have':'');
+ let types=d.types.length?d.types.map(t=>`<span class="type">${typeNames[typeApi.indexOf(t)]||t}</span>`).join(''):'';
+ c.innerHTML=`<img src="${sprite(d.n)}" loading="lazy"><div style="min-width:0"><div class="num">#${String(d.n).padStart(4,'0')} · Gén. ${d.g}</div><div class="name">${d.name}</div><div>${types}</div></div><button class="star ${f?'on':''}" title="Favori">${f?'★':'☆'}</button><input class="check" type="checkbox" ${has?'checked':''}>`;
+ c.querySelector('img').style.cursor='pointer';c.querySelector('img').title='Voir la fiche';c.querySelector('img').onclick=()=>openDetails(d.n);c.querySelector('.name').style.cursor='pointer';c.querySelector('.name').onclick=()=>openDetails(d.n);const check=c.querySelector('.check');
+ check.addEventListener('click',e=>e.stopPropagation());
+ check.addEventListener('change',e=>{checked[d.n]=e.target.checked;if(!e.target.checked)delete checked[d.n];save();c.classList.toggle('have',e.target.checked)});
+ c.querySelector('.star').onclick=e=>{e.preventDefault();fav[d.n]=!f;if(!fav[d.n])delete fav[d.n];save();render()};
+ list.appendChild(c)
+ });updateStats()
+}
+function updateStats(){let total=Object.keys(checked).length,p=Math.round(total/1025*100);count.textContent=`${total} / 1025 possédés`;pct.textContent=p+' %';fill.style.width=p+'%';updateCollection()}
+function updateCollection(){
+ let total=Object.keys(checked).length, fs=Object.keys(fav).length;
+ stattext.innerHTML=`<b>${total}/1025</b> Pokémon possédés · <b>${Math.round(total/1025*100)}%</b> complété · ⭐ ${fs} favoris`;
+ badges.innerHTML='';
+ [[10,'🌟','10 Pokémon'],[50,'🥉','50 Pokémon'],[100,'🥈','100 Pokémon'],[151,'🏅','Kanto complet'],[251,'🏆','Johto complet'],[386,'🎖️','Hoenn complet'],[493,'💎','Sinnoh complet'],[649,'👑','Unys complet'],[809,'🔥','Alola complet'],[905,'⚡','Galar complet'],[1025,'🌌','Pokédex complet']].forEach(x=>{let b=document.createElement('div');b.className='badge '+(total>=x[0]?'unlocked':'');b.innerHTML=`<b>${x[1]}</b>${x[2]}<br><span class="small">${total>=x[0]?'Débloqué':'À débloquer'}</span>`;badges.appendChild(b)});
+ gens.innerHTML=genEnds.map((end,i)=>{let start=i?genEnds[i-1]+1:1,have=0;for(let n=start;n<=end;n++)if(checked[n])have++;return `<div style="margin:9px 0"><b>Génération ${i+1}</b> : ${have}/${end-start+1} (${Math.round(have/(end-start+1)*100)}%)</div>`}).join('')
+}
+function save(){localStorage.setItem('dexHave',JSON.stringify(checked));localStorage.setItem('dexFav',JSON.stringify(fav));updateStats()}
+function setMode(m){mode=m;render()}function tab(t,b){dex.style.display=t==='dex'?'block':'none';stats.style.display=t==='stats'?'block':'none';document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');if(t==='stats')updateCollection()}
+function toggleTheme(){let d=document.documentElement.getAttribute('data-theme')==='dark';document.documentElement.setAttribute('data-theme',d?'':'dark');localStorage.setItem('theme',d?'light':'dark')}
+function resetAll(){if(confirm('Effacer toutes les coches et favoris ?')){checked={};fav={};save();render()}}
+search.oninput=render;gen.onchange=render;typefilter.onchange=render;
+if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');load();
+</script></body></html>
